@@ -1,13 +1,15 @@
 
+from __future__ import division
+from __future__ import absolute_import
 import torch
 import numpy as np
 
 from .utils import to_np, to_tensor
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device(u'cuda' if torch.cuda.is_available() else u'cpu')
 
 
 def normalize(x, x_mean= None, mean_center = True, x_scaler = None, scale = True, **kwargs):
-    """Normalize point clouds
+    u"""Normalize point clouds
 
         Parameters
         ----------
@@ -66,7 +68,7 @@ def normalize(x, x_mean= None, mean_center = True, x_scaler = None, scale = True
 
 def denormalize(x_norm, x_mean, x_scaler, **kwargs):
     
-    """Denormalize point clouds
+    u"""Denormalize point clouds
 
     Parameters
     ----------
@@ -90,7 +92,7 @@ def denormalize(x_norm, x_mean, x_scaler, **kwargs):
     return x_norm*x_scaler + x_mean
 
 def sample_sphere_uniform(n_points=1000, n_dims=3, radius=1.0, random_seed=13):
-    """Sample uniformly from d-dimensional unit ball
+    u"""Sample uniformly from d-dimensional unit ball
 
     The code is inspired by this small note:
     https://blogs.sas.com/content/iml/2016/04/06/generate-points-uniformly-in-ball.html
@@ -123,7 +125,7 @@ def sample_sphere_uniform(n_points=1000, n_dims=3, radius=1.0, random_seed=13):
     return to_tensor(x).to(device)
 
 def sample_sphere_nonuniform(n_points=1000, n_dims=3, radius=1.0, random_seed=13):
-    """Sample nonuniformly from d-dimensional unit ball
+    u"""Sample nonuniformly from d-dimensional unit ball
 
     The code is inspired by this small note:
     https://blogs.sas.com/content/iml/2016/04/06/generate-points-uniformly-in-ball.html
@@ -156,7 +158,7 @@ def sample_sphere_nonuniform(n_points=1000, n_dims=3, radius=1.0, random_seed=13
     return to_tensor(x).to(device)
 
 def sample_grid_cube(grid_size=32, n_dims=3, minv=-1.0, maxv=1.0):
-    """ Generate d-dimensional grid BPS basis
+    u""" Generate d-dimensional grid BPS basis
     Parameters
     ----------
     grid_size: int
@@ -171,9 +173,9 @@ def sample_grid_cube(grid_size=32, n_dims=3, minv=-1.0, maxv=1.0):
         n-d grid points
     """
 
-    linspaces = [np.linspace(minv, maxv, num=grid_size) for d in range(0, n_dims)]
+    linspaces = [np.linspace(minv, maxv, num=grid_size) for d in xrange(0, n_dims)]
     coords = np.meshgrid(*linspaces)
-    basis = np.concatenate([coords[i].reshape([-1, 1]) for i in range(0, n_dims)], axis=1)
+    basis = np.concatenate([coords[i].reshape([-1, 1]) for i in xrange(0, n_dims)], axis=1)
 
     return to_tensor(basis).to(device)
 
@@ -204,7 +206,7 @@ def fibonacci_sphere(samples=1, randomize=True):
     offset = 2. / samples
     increment = math.pi * (3. - math.sqrt(5.))
 
-    for i in range(samples):
+    for i in xrange(samples):
         y = ((i * offset) - 1) + (offset / 2)
         r = math.sqrt(1 - pow(y, 2))
 

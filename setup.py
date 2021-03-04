@@ -1,25 +1,27 @@
+from __future__ import absolute_import
 from setuptools import setup, find_packages
+from io import open
 
 
 setup(
-    name='bps_torch',
+    name=u'bps_torch',
     include_package_data=True,
     #packages=find_packages(),
-    description='A Pytorch Inplementation of bps_torch 3D representation',
-    long_description=open("README.md").read(),
-    long_description_content_type="text/markdown",
-    version='0.1',
-    url='https://github.com/otaheri/bps_torch',
-    author='Omid Taheri',
-    author_email='omid.taheri@tuebingen.mpg.de',
-    maintainer='Omid Taheri',
-    maintainer_email='omid.taheri@tuebingen.mpg.de',
+    description=u'A Pytorch Inplementation of bps_torch 3D representation',
+    long_description=open(u"README.md").read(),
+    long_description_content_type=u"text/markdown",
+    version=u'0.1',
+    url=u'https://github.com/otaheri/bps_torch',
+    author=u'Omid Taheri',
+    author_email=u'omid.taheri@tuebingen.mpg.de',
+    maintainer=u'Omid Taheri',
+    maintainer_email=u'omid.taheri@tuebingen.mpg.de',
     #keywords=['pip','MANO'],
     install_requires=[
-          'numpy>=1.16.2',
-          'torch>=1.0.1.post2',
-          'torchgeometry>=0.1.2',
+          u'numpy>=1.16.2',
+          u'torch>=1.0.1.post2',
+          u'torchgeometry>=0.1.2',
       ],
-    packages=['bps_torch']
+    packages=[u'bps_torch']
       
     )
