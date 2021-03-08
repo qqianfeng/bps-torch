@@ -25,10 +25,12 @@ def main(data_path):
     bps = bps_torch(bps_type='random_uniform', n_bps_points=4096, radius=0.15, n_dims=3)
     # Save the "ground_truth" bps
     np.save(os.path.join(data_path, 'basis_point_set.npy'), to_np(bps.bps.squeeze()))
-    for obj_full in os.listdir(data_path):
+    objs = [obj for obj in os.listdir(data_path) if '.' not in obj]
+    for obj_full in objs:
+        print("Processing object: ", obj_full)
         obj_path = os.path.join(data_path, obj_full)
-        dirs = os.listdir(obj_path)
-        for pcd_name in dirs:
+        pcds = [dir for dir in os.listdir(obj_path) if 'pcd' in dir]
+        for pcd_name in pcds:
             pcd_path = os.path.join(obj_path, pcd_name)
             pcd = o3d.io.read_point_cloud(pcd_path)
             points = np.asarray(pcd.points)
