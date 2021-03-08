@@ -1,5 +1,4 @@
 
-from __future__ import absolute_import
 import torch
 import numpy as np
 
@@ -11,7 +10,7 @@ def to_tensor(array, dtype=torch.float32):
 
 
 def to_np(array, dtype=np.float32):
-    if u'scipy.sparse' in unicode(type(array)):
+    if 'scipy.sparse' in str(type(array)):
         array = np.array(array.todencse(), dtype=dtype)
     elif torch.is_tensor(array):
         array = array.detach().cpu().numpy()
