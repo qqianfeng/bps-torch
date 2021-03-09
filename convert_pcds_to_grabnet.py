@@ -22,9 +22,13 @@ def show_pcd_and_bps(pcd, bps):
 
 
 def main(data_path):
+    # Generate random bps
     bps = bps_torch(bps_type='random_uniform', n_bps_points=4096, radius=0.15, n_dims=3)
     # Save the "ground_truth" bps
+    base = os.path.split(data_path)[0]
     np.save(os.path.join(data_path, 'basis_point_set.npy'), to_np(bps.bps.squeeze()))
+    # Append point_clouds to path
+    data_path = os.path.join(data_path, 'point_clouds')
     objs = [obj for obj in os.listdir(data_path) if '.' not in obj]
     for obj_full in objs:
         print("Processing object: ", obj_full)
@@ -35,18 +39,18 @@ def main(data_path):
             pcd = o3d.io.read_point_cloud(pcd_path)
             points = np.asarray(pcd.points)
 
-            pcd_enc = bps.encode(points)
-            bps_np = np.squeeze(to_np(bps.bps))
+            pcd_enc = bps.encode(points)['dists']
+            pcd_enc_np = np.squeeze(to_np(pcd_enc))
 
             #show_pcd_and_bps(points, bps_np)
 
             num_str = pcd_path.split('pcd')[-2][:-1]
-            save_path = os.path.join(os.path.split(pcd_path)[0], obj_full + '_' + num_str + '.npy')
-            np.save(save_path, bps_np)
+            save_path = os.path.join(
+                os.path.split(pcd_path)[0], obj_full + '_bps' + num_str + '.npy')
+            np.save(save_path, pcd_enc_np)
 
 
 if __name__ == '__main__':
-    bps = np.load(
-        '/home/vm/data/vae-grasp/point_clouds/kit_CoffeeCookies/kit_CoffeeCookies003.npy')
-    data_path = '/home/vm/data/vae-grasp/point_clouds'
+
+    data_path = '/home/vm/data/vae-grasp/train'
     main(data_path)
