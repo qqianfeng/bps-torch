@@ -21,36 +21,40 @@ def show_pcd_and_bps(pcd, bps):
     o3d.visualization.draw_geometries([pcd_pcd, bps_pcd])
 
 
-def main(data_path):
+def main(base_path, data_set_names, use_existing_bps, bps_path=None):
     # Generate random bps
-    bps = bps_torch(bps_type='random_uniform', n_bps_points=4096, radius=0.15, n_dims=3)
-    # Save the "ground_truth" bps
-    base = os.path.split(data_path)[0]
-    np.save(os.path.join(data_path, 'basis_point_set.npy'), to_np(bps.bps.squeeze()))
-    # Append point_clouds to path
-    data_path = os.path.join(data_path, 'point_clouds')
-    objs = [obj for obj in os.listdir(data_path) if '.' not in obj]
-    for obj_full in objs:
-        print("Processing object: ", obj_full)
-        obj_path = os.path.join(data_path, obj_full)
-        pcds = [dir for dir in os.listdir(obj_path) if 'pcd' in dir]
-        for pcd_name in pcds:
-            pcd_path = os.path.join(obj_path, pcd_name)
-            pcd = o3d.io.read_point_cloud(pcd_path)
-            points = np.asarray(pcd.points)
+    if use_existing_bps:
+        assert bps_path is not None
+        bps = np.load(bps_path)
+    else:
+        bps = bps_torch(bps_type='random_uniform', n_bps_points=4096, radius=0.2, n_dims=3)
+        # Save the "ground_truth" bps
+        np.save(os.path.join(base_path, 'basis_point_set.npy'), to_np(bps.bps.squeeze()))
 
-            pcd_enc = bps.encode(points)['dists']
-            pcd_enc_np = np.squeeze(to_np(pcd_enc))
+    for dset in data_set_names:
+        data_path = os.path.join(data_path, dset, 'point_clouds')
+        objs = [obj for obj in os.listdir(data_path) if '.' not in obj]
+        for obj_full in objs:
+            print("Processing object: ", obj_full)
+            obj_path = os.path.join(data_path, obj_full)
+            pcds = [f for f in os.listdir(obj_path) if 'pcd' in f]
+            for pcd_name in pcds:
+                pcd_path = os.path.join(obj_path, pcd_name)
+                pcd = o3d.io.read_point_cloud(pcd_path)
+                points = np.asarray(pcd.points)
 
-            #show_pcd_and_bps(points, bps_np)
+                pcd_enc = bps.encode(points)['dists']
+                pcd_enc_np = np.squeeze(to_np(pcd_enc))
 
-            num_str = pcd_path.split('pcd')[-2][:-1]
-            save_path = os.path.join(
-                os.path.split(pcd_path)[0], obj_full + '_bps' + num_str + '.npy')
-            np.save(save_path, pcd_enc_np)
+                #show_pcd_and_bps(points, bps_np)
+
+                num_str = pcd_path.split('pcd')[-2][:-1]
+                os.mkdir(os.path.join(obj_path, 'bps'))
+                save_path = os.path.join(obj_path, 'bps', obj_full + '_bps' + num_str + '.npy')
+                np.save(save_path, pcd_enc_np)
 
 
 if __name__ == '__main__':
 
-    data_path = '/home/vm/data/vae-grasp/train'
-    main(data_path)
+    base_path = '/home/vm/data/vae-grasp'
+    main(base_path, data_set_names=['train', 'test', 'val'], use_existing_bps=False)
