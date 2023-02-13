@@ -64,24 +64,24 @@ class bps_torch():
             raise ValueError(
                 "Invalid basis type. Supported types: \'random_uniform\', \'random_nonuniform\', \'grid_cube\', \'grid_sphere\', and \'custom\'"
             )
-
+        self.device = device
         self.bps = basis_set.view(1, -1, n_dims)
 
     def encode(self, x, feature_type=['dists'], x_features=None, custom_basis=None, **kwargs):
 
-        x = to_tensor(x).to(device)
+        x = to_tensor(x).to(self.device)
         is_batch = True if x.ndim > 2 else False
 
         if not is_batch:
             x = x.unsqueeze(0)
 
         bps = self.bps if custom_basis is None else custom_basis
-        bps = to_tensor(bps).to(device)
+        bps = to_tensor(bps).to(self.device)
         _, P_bps, D = bps.shape
         N, P_x, D = x.shape
 
-        deltas = torch.zeros([N, P_bps, D]).to(device)
-        b2x_idxs = torch.zeros([N, P_bps], dtype=torch.long).to(device)
+        deltas = torch.zeros([N, P_bps, D]).to(self.device)
+        b2x_idxs = torch.zeros([N, P_bps], dtype=torch.long).to(self.device)
 
         ch_dist = chd.ChamferDistance()
 
@@ -120,14 +120,14 @@ class bps_torch():
 
     def decode(self, x_deltas, custom_basis=None, **kwargs):
 
-        x = to_tensor(x_deltas).to(device)
+        x = to_tensor(x_deltas).to(self.device)
         is_batch = True if x.ndim > 2 else False
 
         if not is_batch:
             x = x.unsqueeze(dim=0)
 
         bps = self.bps if custom_basis is None else custom_basis
-        bps = to_tensor(bps).to(device)
+        bps = to_tensor(bps).to(self.device)
         if len(bps.shape) < 2:
             bps = bps.unsqueeze(dim=0)
 
