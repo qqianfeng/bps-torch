@@ -23,8 +23,6 @@ from .tools import sample_sphere_nonuniform
 from .tools import sample_sphere_uniform
 from .tools import normalize, denormalize
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 
 class bps_torch():
     def __init__(self,
@@ -33,6 +31,7 @@ class bps_torch():
                  radius=1.,
                  n_dims=3,
                  random_seed=13,
+                 device=torch.device('cuda' if torch.cuda.is_available() else 'cpu'),
                  custom_basis=None,
                  **kwargs):
 
