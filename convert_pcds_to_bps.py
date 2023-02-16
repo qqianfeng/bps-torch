@@ -27,10 +27,12 @@ def main(base_path, data_set_names, use_existing_bps, bps_path=None):
         assert bps_path is not None
         bps = np.load(bps_path)
     else:
-        bps = bps_torch(bps_type='random_uniform', n_bps_points=4096, radius=0.2, n_dims=3)
+        bps = bps_torch(bps_type='random_uniform', n_bps_points=4096, radius=0.4, n_dims=3)
         # Save the "ground_truth" bps
         np.save(os.path.join(base_path, 'basis_point_set.npy'), to_np(bps.bps.squeeze()))
 
+    bps_np = bps.bps.detach().cpu().numpy()
+    bps_np = bps_np.reshape(-1, 3)
     for dset in data_set_names:
         pcd_folder = os.path.join(base_path, dset, 'point_clouds')
         objs = [obj for obj in os.listdir(pcd_folder) if '.' not in obj]
@@ -49,15 +51,20 @@ def main(base_path, data_set_names, use_existing_bps, bps_path=None):
                 pcd_enc = bps.encode(points)['dists']
                 pcd_enc_np = np.squeeze(to_np(pcd_enc))
 
-                #show_pcd_and_bps(points, bps_np)
+                # show_pcd_and_bps(points, bps_np)
 
                 num_str = pcd_path.split('pcd')[-2][:-1]
 
                 save_path = os.path.join(bps_obj_folder, obj_full + '_bps' + num_str + '.npy')
+                print(save_path)
                 np.save(save_path, pcd_enc_np)
 
 
 if __name__ == '__main__':
 
-    base_path = '/home/vm/data/vae-grasp'
-    main(base_path, data_set_names=['train', 'test', 'val'], use_existing_bps=False)
+    base_path = '/home/vm/new_data_full'
+    # bps_path = '/home/vm/new_data_full/basis_point_set.npy'
+    main(base_path,
+         data_set_names=['train', 'test', 'eval'],
+         use_existing_bps=False,
+         bps_path=None)
