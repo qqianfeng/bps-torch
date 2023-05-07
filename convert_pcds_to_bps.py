@@ -46,6 +46,16 @@ def main(base_path, data_set_names, use_existing_bps, bps_path=None):
             for pcd_name in pcds:
                 pcd_path = os.path.join(pcd_obj_path, pcd_name)
                 pcd = o3d.io.read_point_cloud(pcd_path)
+
+                # If you need to transform pcd frame from world to self centroid
+                camera_to_world = np.array([[1.00000000e+00, -2.18874845e-13, -1.44702345e-12, -4.80000000e-01],
+                                            [-1.44707624e-12, -2.95520207e-01, -9.55336489e-01, 9.46755955e-02],
+                                            [-2.18525541e-13,  9.55336489e-01, -2.95520207e-01, 9.15468088e-01],
+                                            [0.00000000e+00,  0.00000000e+00,  0.00000000e+00, 1.00000000e+00]])
+                pcd.transform(camera_to_world)
+                pcd.translate(-1*pcd.get_center())
+                ##############################################################
+
                 points = np.asarray(pcd.points)
 
                 pcd_enc = bps.encode(points)['dists']
