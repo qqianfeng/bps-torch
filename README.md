@@ -27,6 +27,8 @@ Finally install the package using the command below:
 pip install git+https://github.com/otaheri/bps_torch
 ```
 
+In case of pytorch3d issue. Follow installation here: https://github.com/facebookresearch/pytorch3d/blob/main/INSTALL.md
+
 ### Demos
 
 Below is an example of how to use the bps_torch code.
